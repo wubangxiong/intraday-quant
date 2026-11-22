@@ -398,6 +398,41 @@ body{
 }
 .contact-copy:hover{ box-shadow:0 0 14px rgba(210,153,29,.6); transform:translateY(-1px); }
 .contact-tip{ text-align:center; font-size:11px; color:var(--dim); margin-top:6px; letter-spacing:1px; }
+
+/* ==================== API KEY SETTINGS ==================== */
+.api-float-btn{
+  position:fixed; right:16px; bottom:16px; z-index:9000;
+  background:rgba(22,27,34,.92); border:1px solid var(--gold);
+  color:var(--gold); padding:8px 14px; border-radius:8px;
+  cursor:pointer; font-size:12px; font-weight:700; letter-spacing:1px;
+  transition:.25s;
+}
+.api-float-btn:hover{ box-shadow:0 0 14px rgba(210,153,29,.45); transform:translateY(-1px); }
+#apiModal{
+  position:fixed; inset:0; z-index:10001;
+  background:rgba(0,0,0,.72);
+  backdrop-filter:blur(6px);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; visibility:hidden; transition:opacity .35s, visibility .35s;
+}
+#apiModal.show{ opacity:1; visibility:visible; }
+#apiModal .contact-card{ transform:translateY(24px) scale(.96); transition:transform .35s cubic-bezier(.2,.9,.3,1.2); }
+#apiModal.show .contact-card{ transform:translateY(0) scale(1); }
+.api-key-input{
+  width:100%; background:var(--bg); border:1px solid var(--border);
+  color:var(--text); font-size:14px; padding:10px 12px; border-radius:8px;
+  outline:none; margin-bottom:14px; font-family:'JetBrains Mono',monospace;
+  letter-spacing:1px; transition:border-color .3s;
+}
+.api-key-input:focus{ border-color:var(--gold); }
+.api-save-btn{
+  width:100%; background:var(--gold); color:#0d1117; border:none; cursor:pointer;
+  font-size:14px; font-weight:700; padding:11px; border-radius:8px;
+  transition:.25s; letter-spacing:2px;
+}
+.api-save-btn:hover{ box-shadow:0 0 16px rgba(210,153,29,.6); }
+.api-link{ color:var(--cyan); text-decoration:none; }
+.api-link:hover{ text-decoration:underline; }
 </style>
 </head>
 <body>
@@ -429,6 +464,19 @@ body{
       <button class="contact-copy" onclick="copyContact(this)">复制</button>
     </div>
     <div class="contact-tip">点击复制号码，打开 QQ 即可加入 / 联系</div>
+  </div>
+</div>
+
+<!-- API SETTINGS -->
+<button class="api-float-btn" onclick="openApiSettings()">⚙ API 设置</button>
+<div id="apiModal">
+  <div class="contact-card">
+    <button class="contact-close" onclick="closeApiSettings()">×</button>
+    <div class="contact-title">设置 DeepSeek API Key</div>
+    <div class="contact-sub">AI 策略 / 热点推演需要你自己的 Key</div>
+    <input id="apiKeyInput" class="api-key-input" type="password" placeholder="粘贴你的 sk-... 密钥">
+    <button class="api-save-btn" onclick="saveApiKey()">保存并使用</button>
+    <div class="contact-tip" style="margin-top:14px;">前往 <a class="api-link" href="https://platform.deepseek.com" target="_blank" rel="noopener">platform.deepseek.com</a> 申请，仅保存在你本地浏览器</div>
   </div>
 </div>
 
@@ -545,6 +593,25 @@ function copyContact(btn){
   function fallback(){ const t=document.createElement('textarea'); t.value=val; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{ document.execCommand('copy'); done(); }catch(e){} document.body.removeChild(t); }
 }
 
+// ==================== API KEY ====================
+function openApiSettings(){
+  const m=document.getElementById('apiModal');
+  if(m){ document.getElementById('apiKeyInput').value=DS_KEY; m.classList.add('show'); }
+}
+function closeApiSettings(){ const m=document.getElementById('apiModal'); if(m)m.classList.remove('show'); }
+function saveApiKey(){
+  const v=document.getElementById('apiKeyInput').value.trim();
+  DS_KEY=v;
+  if(v) localStorage.setItem('ds_api_key',v);
+  else localStorage.removeItem('ds_api_key');
+  closeApiSettings();
+}
+function ensureApiKey(){
+  if(DS_KEY) return true;
+  openApiSettings();
+  return false;
+}
+
 // ==================== STATE ====================
 let tickPrice=146.80,basePrice=146.80,tickData=[],tickDates=[],tickCount=0;
 let recentReturns=[];
@@ -647,9 +714,10 @@ const FALLBACK_EVENTS=[
   {event:'减肥药GLP-1国内获批，减肥概念集体涨停',time:'5小时前',heat:97},
 ];
 
-const DS_KEY='sk-fd4f61d42bda4338a15822db285baf5c';
+let DS_KEY = localStorage.getItem('ds_api_key') || '';
 
 async function fetchDanmakuEvents(){
+  if(!ensureApiKey()){ danmakuEvents=[...FALLBACK_EVENTS]; initDanmaku(); return; }
   try{
     const resp=await fetch('https://api.deepseek.com/v1/chat/completions',{
       method:'POST',
@@ -1127,6 +1195,7 @@ function resetDailyAnim(){
 // ==================== STRATEGY GENERATION ====================
 async function runStrategyEngine(){
   if(!dailyOhlcv.length){await fetchDailyData();if(!dailyOhlcv.length)return;}
+  if(!ensureApiKey())return;
   const winRate=parseFloat(document.getElementById('strategyWinRate').value)||45;
   const stopLoss=parseFloat(document.getElementById('strategyStopLoss').value)||5;
   const target=parseFloat(document.getElementById('strategyTarget').value)||15;
@@ -1314,6 +1383,7 @@ let batchStrategies=[];
 
 async function runBatchStrategy(){
   if(!dailyOhlcv.length){await fetchDailyData();if(!dailyOhlcv.length)return;}
+  if(!ensureApiKey())return;
   const winRate=parseFloat(document.getElementById('strategyWinRate').value)||45;
   const stopLoss=parseFloat(document.getElementById('strategyStopLoss').value)||5;
   const target=parseFloat(document.getElementById('strategyTarget').value)||15;
@@ -1398,6 +1468,7 @@ function renderStrategyList(){
 
 async function runShortStrategy(){
   if(!dailyOhlcv.length){await fetchDailyData();if(!dailyOhlcv.length)return;}
+  if(!ensureApiKey())return;
   const symbol=document.getElementById('strategySymbol').value.trim()||'600036';
   const customReq=document.getElementById('strategyCustom').value.trim();
   const wrap=document.getElementById('strategyResultWrap');
