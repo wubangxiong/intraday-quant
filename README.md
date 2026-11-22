@@ -1,0 +1,44 @@
+# 量化分析仪表盘 (Quant Dashboard)
+
+一个纯前端的实时量化信号引擎 + AI 事件推演分析仪表盘。**单文件、零后端、零依赖安装**，下载即可运行。
+
+## 一、快速运行（二选一）
+
+### 方式 1：直接双击
+在文件资源管理器中双击 `index.html`，用浏览器（Chrome / Edge）打开即可。
+
+### 方式 2：本地服务器（推荐，体验更完整）
+在项目目录打开终端，运行：
+
+```bash
+python -m http.server 8000
+```
+
+然后浏览器访问：<http://localhost:8000>
+
+> 没有 Python？也可以用 Node.js：
+>
+> ```bash
+> npx serve .
+> ```
+
+## 二、让 AI 助手（豆包 / TraeCode 等）帮你一键部署
+
+把下面这段话直接发给你的 AI 助手，它就能自动帮你部署到本机：
+
+> 请克隆仓库 `https://github.com/你的用户名/quant-dashboard.git`，
+> 然后进入项目目录运行 `python -m http.server 8000`，
+> 最后打开 http://localhost:8000 预览。
+
+## 三、项目结构
+
+```
+.
+├── index.html   # 全部功能都在这个文件里
+└── README.md    # 本说明
+```
+
+## 四、联系作者
+
+- QQ 交流群：`436722844`
+- QQ：`207442662`
