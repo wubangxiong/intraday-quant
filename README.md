@@ -36,7 +36,7 @@ AI 策略生成、热点事件推演等功能依赖 DeepSeek 大模型，**需�
 
 把下面这段话直接发给你的 AI 助手，它就能自动帮你部署到本机：
 
-> 请克隆仓库 `https://github.com/wubangxiong/quant-dashboard.git`，
+> 请克隆仓库 `https://github.com/wubangxiong/intraday-quant.git`，
 > 然后进入项目目录运行 `python -m http.server 8000`，
 > 最后打开 http://localhost:8000 预览。
 
