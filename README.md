@@ -1,4 +1,4 @@
-# 日内做T量化器 (Intraday Quant)
+# 日内做T量化器 PRO (Intraday Quant)
 
 一个纯前端的实时量化信号引擎 + AI 事件推演分析仪表盘。**单文件、零后端、零依赖安装**，下载即可运行。
 
@@ -27,8 +27,8 @@ python -m http.server 8000
 AI 策略生成、热点事件推演等功能依赖 DeepSeek 大模型，**需要填入你自己的 API Key**（本项目不内置任何 Key）：
 
 1. 打开 <https://platform.deepseek.com> 注册并创建 API Key（格式 `sk-...`）
-2. 打开页面后，点击右下角「⚙ API 设置」
-3. 粘贴你的 Key，点击「保存并使用」
+2. 打开页面后，点顶部「⬇ 导出」→「🗒 AI 策略顾问」→ 展开「⚙ API 配置」
+3. 粘贴你的 Key（自动保存在本机浏览器，不会上传）
 
 > Key 只保存在你本地浏览器（localStorage），不会上传到任何服务器。
 
